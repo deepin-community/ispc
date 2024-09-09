@@ -1,4 +1,23 @@
 #!/usr/bin/make -f
+#export DH_VERBOSE = 1
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 %:
 	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DISPC_INCLUDE_TESTS=OFF \
+		-DISPC_INCLUDE_EXAMPLES=OFF \
+		-DISPC_INCLUDE_RT=ON \
+		-DISPC_INCLUDE_UTILS=OFF \
+		-DCMAKE_CXX_FLAGS="-gdwarf-4" # dwz do not support Clang DWARFv5, see #1016936
+
+override_dh_auto_build:
+	@echo 'blhc: ignore-line-regexp: \[\ ?\ ?[0-9]+%\]\ Building\ CXX\ object\ .+\.(cpp|cc)\.o'
+	dh_auto_build
+
+override_dh_dwz:
+	dh_dwz --exclude=bin # To work-around Lintian stripped-library error.
