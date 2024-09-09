@@ -1,15 +1,69 @@
-Source: template-repository
-Section: unknown
+Source: ispc
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Uploaders: Francois Mazen <mzf@debian.org>
+Section: devel
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Build-Depends:
+ bison,
+ clang,
+ cmake,
+ debhelper-compat (= 13),
+ flex,
+ g++-multilib [amd64 i386],
+ libc6-dev-armel-cross [arm64],
+ libc6-dev-armhf-cross [arm64],
+ libclang-dev,
+ libtbb-dev,
+ llvm-dev
+Rules-Requires-Root: no
+Standards-Version: 4.6.2
+Homepage: https://ispc.github.io/
+Vcs-Browser: https://salsa.debian.org/science-team/ispc
+Vcs-Git: https://salsa.debian.org/science-team/ispc.git
 
-Package: template-repository
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: ispc
+Architecture: i386 amd64 arm64
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Intel Implicit SPMD Program Compiler
+ ispc is a compiler for a variant of the C programming language, with extensions
+ for single program, multiple data programming. Under the SPMD model, the
+ programmer writes a program that generally appears to be a regular serial
+ program, though the execution model is actually that a number of program
+ instances execute in parallel on the hardware.
+ .
+ This package contains the ispc compiler.
+
+Package: libispcrt1
+Architecture: i386 amd64 arm64
+Section: libs
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Intel Implicit SPMD Program Compiler runtime library
+ ispc is a compiler for a variant of the C programming language, with extensions
+ for single program, multiple data programming. Under the SPMD model, the
+ programmer writes a program that generally appears to be a regular serial
+ program, though the execution model is actually that a number of program
+ instances execute in parallel on the hardware.
+ .
+ This package contains the runtime library for building programs that
+ use ispc runtime.
+
+Package: libispcrt-dev
+Architecture: i386 amd64 arm64
+Section: libdevel
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ libispcrt1 (= ${binary:Version}), ispc
+Description: Intel Implicit SPMD Program Compiler runtime library development files
+ ispc is a compiler for a variant of the C programming language, with extensions
+ for single program, multiple data programming. Under the SPMD model, the
+ programmer writes a program that generally appears to be a regular serial
+ program, though the execution model is actually that a number of program
+ instances execute in parallel on the hardware.
+ .
+ This package contains the headers library for building programs that
+ use the ispc runtime.

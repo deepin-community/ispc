@@ -1,0 +1,8 @@
+Tests: mandelbrot
+Architecture: arm64 amd64 armel armhf i386
+Depends: ispc, build-essential
+Restrictions: allow-stderr
+
+Tests: test-libispcrt
+Architecture: arm64 amd64 armel armhf i386
+Depends: libispcrt-dev, cmake, build-essential
