@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+
+WORKDIR=$AUTOPKGTEST_ARTIFACTS
+cd "$WORKDIR"
+
+# Create the cpp file.
+cat <<EOF > test_ispcrt.cpp
+#include <iostream>
+#include "ispcrt.h"
+int main()
+{
+    ISPCRTDevice device = ispcrtGetDevice(ISPCRT_DEVICE_TYPE_AUTO, 0);
+    if(!device)
+    {
+        std::cerr << "Invalid device" << std::endl;
+        return 1;
+    }
+    ISPCRTDeviceType type = ispcrtGetDeviceType(device);
+    if(type == ISPCRT_DEVICE_TYPE_CPU)
+    {
+        std::cout << "CPU Device Type" << std::endl;
+    }
+    else if(type == ISPCRT_DEVICE_TYPE_GPU)
+    {
+        std::cout << "GPU Device Type" << std::endl;
+    }
+    else
+    {
+        std::cerr << "Unknown Device Type: " << type << std::endl;
+    }
+    ispcrtRelease(device);
+    return 0;
+}
+EOF
+
+# Create the CMake file.
+cat <<EOF > CMakeLists.txt
+cmake_minimum_required(VERSION 3.29)
+project(test_ispcrt)
+find_package(ispcrt REQUIRED)
+add_executable(test_ispcrt test_ispcrt.cpp)
+target_link_libraries(test_ispcrt ispcrt::ispcrt)
+EOF
+
+echo "building..."
+mkdir build
+cd build
+cmake ..
+make
+
+echo "running..."
+test -x test_ispcrt
+./test_ispcrt
