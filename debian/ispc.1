@@ -1,0 +1,392 @@
+.TH ispc 1
+
+
+.SH NAME
+ispc \- Intel Implicit SPMD Program Compiler
+
+
+.SH SYNOPSIS
+.B ispc
+.RI [ options ] " file"
+
+
+.SH DESCRIPTION
+.B ispc
+is a compiler for a variant of the C programming language, with extensions for
+single program, multiple data programming. Under the SPMD model, the programmer
+writes a program that generally appears to be a regular serial program, though
+the execution model is actually that a number of program instances execute in
+parallel on the hardware.
+
+
+.SH OPTIONS
+
+.TP
+.BR \-\-addressing " {" "32,64" }
+Select
+.B 32\- or
+.BR 64\- bit
+addressing. (Note that
+.BR 32\- bit
+addressing calculations are done by default, even on
+.BR 64\- bit
+target architectures.)
+
+.TP
+.BR \-\-arch " {" "x86, x86\-64, arm, aarch64, wasm32" }
+Select target architecture
+
+.TP
+.B \-\-colored\-output
+Always use terminal colors in error/warning messages
+
+.TP
+.BI \-\-cpu " <type>"
+An alias for
+.BI \-\-device " <type>"
+switch
+
+.TP
+.BI \-D " <foo>"
+#define given value when running preprocessor
+
+.TP
+.BI \-\-dev\-stub " <filename>"
+Emit device\-side offload stub functions to file
+
+.TP
+.BI \-\-device " <type>"
+Select target device
+
+.IR <type>
+= {
+.B x86\-64
+,
+.B atom
+(synonyms:
+.B bonnell
+),
+.B core2, penryn, corei7
+(synonyms:
+.B nehalem
+),
+.B btver2
+(synonyms:
+.B ps4
+),
+.B corei7\-avx
+(synonyms:
+.B sandybridge
+),
+.B core\-avx\-i
+.B
+(synonyms:
+.B ivybridge
+),
+.B core\-avx2
+(synonyms:
+.B haswell
+),
+.B broadwell, skylake, knl, skx, icelake\-client
+(synonyms:
+.B icl
+),
+.B slm
+(synonyms:
+.B silvermont
+),
+.B icelake\-server
+(synonyms:
+.B icx
+),
+.B tigerlake
+(synonyms:
+.B tgl
+),
+.B alderlake
+(synonyms:
+.B adl
+),
+.B sapphirerapids
+(synonyms:
+.B spr
+),
+.B znver1, znver2
+(synonyms:
+.B ps5
+),
+.B znver3, cortex\-a9, cortex\-a15, cortex\-a35, cortex\-a53, cortex\-a57,
+.B apple\-a7, apple\-a10, apple\-a11, apple\-a12, apple\-a13, apple\-a14
+}
+
+.TP
+.B \-\-dllexport
+Make non\-static functions DLL exported.  Windows target only
+
+.TP
+.BR \-\-dwarf\-version " {" "2,3,4" }
+Generate source\-level debug information with given DWARF version (triggers
+.B \-g
+).  Ignored for Windows target
+
+.TP
+.B \-E
+Run only the preprocessor
+
+.TP
+.B \-\-emit\-asm
+Generate assembly language file as output
+
+.TP
+.B \-\-emit\-llvm
+Emit LLVM bitcode file as output
+
+.TP
+.B \-\-emit\-llvm\-text
+Emit LLVM bitcode file as output in textual form
+
+.TP
+.B \-\-emit\-obj
+Generate object file file as output (default)
+
+.TP
+.B \-\-enable\-llvm\-intrinsics
+Enable experimental feature to call LLVM intrinsics from ISPC source code
+
+.TP
+.BI \-\-error\-limit " <value>"
+Limit maximum number of errors emitting by ISPC to
+.I <value>
+
+.TP
+.BI \-\-force\-alignment " <value>"
+Force alignment in memory allocations routine to be
+.I <value>
+
+.TP
+.B \-g
+Generate source\-level debug information
+
+.TP
+.B \-\-help
+Print help
+
+.TP
+.B \-\-help\-dev
+Print help for developer options
+
+.TP
+.BI \-\-host\-stub " <filename>"
+Emit host\-side offload stub functions to file
+
+.TP
+.BI \-h " <name>" " / \-\-header\-outfile" " <name>"
+Output filename for header
+
+.TP
+.BI \-I " <path>"
+Add <path> to #include file search path
+
+.TP
+.B \-\-ignore\-preprocessor\-errors
+Suppress errors from the preprocessor
+
+.TP
+.B \-\-instrument
+Emit instrumentation to gather performance data
+
+.TP
+.BI \-\-math\-lib " <option>"
+Select math library
+
+.RS 8
+.TP
+.B default
+Use ispc's built\-in math functions
+.TP
+.B fast
+Use high\-performance but lower\-accuracy math functions
+.TP
+.B svml
+Use the Intel(r) SVML math libraries
+.TP
+.B system
+Use the system's math library (*may be quite slow*)
+.RE
+
+.TP
+.BI \-MMM " <filename>"
+Write #include dependencies to given file.
+
+.TP
+.B \-M
+Output a rule suitable for
+.B make
+describing the dependencies of the main source file to stdout.
+
+.TP
+.BI \-MF " <filename>"
+When used with
+.B \-M,
+specifies a file to write the dependencies to.
+
+.TP
+.BI \-MT " <filename>"
+When used with
+.B \-M,
+changes the target of the rule emitted by dependency generation.
+
+.TP
+.B \-\-no\-omit\-frame\-pointer
+Disable frame pointer omission. It may be useful for profiling
+
+.TP
+.B \-\-nostdlib
+Don't make the ispc standard library available
+
+.TP
+.B \-\-no\-pragma\-once
+Don't use #pragma once in created headers
+
+.TP
+.B \-\-nocpp
+Don't run the C preprocessor
+
+.TP
+.BI \-o <name>/\-\-outfile " <name>"
+Output filename (may be "\-" for standard output)
+
+.TP
+.B \-O0/\-O(1/2/3)
+Set optimization level. Default behavior is to optimize for speed.
+
+.RS 8
+.TP
+.B \-O0
+Optimizations disabled.
+.TP
+.B \-O1
+Optimization for size.
+.TP
+.B \-O2/O3
+.RE
+
+.TP
+.BI \-\-opt " <option>"
+Set optimization option
+
+.RS 8
+.TP
+.B disable\-assertions
+Remove assertion statements from final code.
+.TP
+.B disable\-fma
+Disable 'fused multiply\-add' instructions (on targets that support them)
+.TP
+.B disable\-loop\-unroll
+Disable loop unrolling.
+.TP
+.B disable\-zmm
+Disable using zmm registers for avx512 targets in favour of ymm. This also affects ABI.
+.TP
+.B fast\-masked\-vload
+Faster masked vector loads on SSE (may go past end of array)
+.TP
+.B fast\-math
+Perform non\-IEEE\-compliant optimizations of numeric expressions
+.TP
+.B force\-aligned\-memory
+Always issue "aligned" vector load and store instructions
+.RE
+
+.TP
+.B \-\-pic
+Generate position\-independent code.  Ignored for Windows target
+
+.TP
+.B \-\-quiet
+Suppress all output
+
+.TP
+.B \-\-support\-matrix
+Print full matrix of supported targets, architectures and OSes
+
+.TP
+.BI \-\-target " <t>"
+Select target ISA and width.
+.I <t>
+={
+.B sse2\-i32x4, sse2\-i32x8, sse4\-i8x16, sse4\-i16x8, sse4\-i32x4, sse4\-i32x8,
+.B avx1\-i32x4, avx1\-i32x8, avx1\-i32x16, avx1\-i64x4, avx2\-i8x32,
+.B avx2\-i16x16, avx2\-i32x4, avx2\-i32x8, avx2\-i32x16, avx2\-i64x4,
+.B avx512knl\-x16, avx512skx\-x4, avx512skx\-x8, avx512skx\-x16, avx512skx\-x32,
+.B avx512skx\-x64, neon\-i8x16, neon\-i16x8, neon\-i32x4, neon\-i32x8,
+.B wasm\-i32x4
+}
+
+.TP
+.BI \-\-target\-os " <os>"
+Select target OS.
+.I <os>
+={
+.B linux, custom_linux, freebsd, android, web
+}
+
+.TP
+.B \-\-time\-trace
+Turn on time profiler. Generates JSON file based on output filename.
+
+.TP
+.BI \-\-time\-trace\-granularity " <value>"
+Minimum time granularity (in microseconds) traced by time profiler.
+
+.TP
+.B \-\-vectorcall/\-\-no\-vectorcall
+Enable/disable vectorcall calling convention on Windows (x64 only). Disabled by
+default
+
+.TP
+.B \-\-version
+Print ispc version
+
+.TP
+.B \-\-werror
+Treat warnings as errors
+
+.TP
+.B \-\-woff
+Disable warnings
+
+.TP
+.B \-\-wno\-perf
+Don't issue warnings related to performance\-related issues
+
+.TP
+.BI \-\-x86\-asm\-syntax " <option>"
+Select style of code if generating assembly
+
+.RS 8
+.TP
+.B
+intel
+Emit Intel\-style assembly
+.TP
+.B
+att
+Emit AT&T\-style assembly
+.RE
+
+
+.SH SEE ALSO
+https://ispc.github.io/
+
+
+.SH AUTHOR
+.B ispc
+is written by Intel Corporation.
+
+This manual page was written by
+.MT mmyangfl@\:gmail.com
+Yangfl
+.ME
+for the Debian Project (and may be used by others).
